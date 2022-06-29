@@ -38,7 +38,7 @@ Como demonstração, vou configurar as partições em um HD modo "GPT" de 20GB :
 | SWAP      | /dev/sda2 | Linux swap | SWAP   | No            | 2 GiB |
 | /         | /dev/sda3 | Linux | BTRFS       | No            | 17,5 GiB |
 
-- Para facilitar a instalaçao vamos criar a variavel "disk" apontando para o HD de instalação:
+- Para facilitar a instalação vamos criar a variável "disk" apontando para o HD de instalação:
 ```
 disk='/dev/sda'
 ```
