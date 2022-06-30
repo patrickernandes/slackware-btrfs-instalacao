@@ -98,17 +98,17 @@ for pkg in a ap d l n; do installpkg --terse --root /mnt /cdrom/slackware64/$pkg
 ```
 cat <<EOF > /mnt/etc/fstab
 #fstab:
-
-/dev/${disk}1   /boot/efi       vfat    defaults                                                                        1    0
-/dev/${disk}2   swap            swap    defaults                                                                        0    0
-/dev/${disk}3   /               btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@,subvol=@
-/dev/${disk}3   /home           btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@home,subvol=@home                  0    0
-/dev/${disk}3   /opt            btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@opt,subvol=@opt                    0    0
-/dev/${disk}3   /var            btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@var,subvol=@var                    0    0
-/dev/${disk}3   /.snapshots     btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@.snapshots,subvol=@.snapshots      0    0
-devpts          /dev/pts        devpts  gid=5,mode=620                                                                  0    0
-proc            /proc           proc    defaults                                                                        0    0
-tmpfs           /dev/shm        tmpfs   nosuid,nodev,noexec                                                             0    0
+      
+${disk}1    /boot/efi       vfat    defaults                                                                        1    0
+${disk}2    swap            swap    defaults                                                                        0    0
+${disk}3    /               btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@,subvol=@                          0    0
+${disk}3    /home           btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@home,subvol=@home                  0    0
+${disk}3    /opt            btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@opt,subvol=@opt                    0    0
+${disk}3    /var            btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@var,subvol=@var                    0    0
+${disk}3    /.snapshots     btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@.snapshots,subvol=@.snapshots      0    0
+devpts      /dev/pts        devpts  gid=5,mode=620                                                                  0    0
+proc        /proc           proc    defaults                                                                        0    0
+tmpfs       /dev/shm        tmpfs   nosuid,nodev,noexec                                                             0    0
 EOF
 ```
 <br>  
