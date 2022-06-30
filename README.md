@@ -57,8 +57,10 @@ mount ${disk}3 /mnt
 
 btrfs su cr /mnt/@
 btrfs su cr /mnt/@home
-btrfs su cr /mnt/@var
 btrfs su cr /mnt/@opt
+btrfs su cr /mnt/@srv
+btrfs su cr /mnt/@tmp
+btrfs su cr /mnt/@var
 btrfs su cr /mnt/@.snapshots
 umount /mnt
 ```
@@ -73,6 +75,8 @@ mount -o noatime,commit=120,compress=zstd,subvol=@ ${disk}3 /mnt
 mkdir /mnt/{boot,home,opt,var,.snapshots}
 mount -o rw,noatime,commit=120,compress=zstd,subvol=@home ${disk}3 /mnt/home
 mount -o rw,noatime,commit=120,compress=zstd,subvol=@opt ${disk}3 /mnt/opt
+mount -o rw,noatime,commit=120,compress=zstd,subvol=@srv ${disk}3 /mnt/srv
+mount -o rw,noatime,commit=120,compress=zstd,subvol=@tmp ${disk}3 /mnt/tmp
 mount -o rw,noatime,commit=120,compress=zstd,subvol=@var ${disk}3 /mnt/var
 mount -o rw,noatime,commit=120,compress=zstd,subvol=@.snapshots ${disk}3 /mnt/.snapshots
 ```
@@ -87,7 +91,7 @@ mkdir -p /mnt/boot/efi/EFI
 
 ## 5 - Instalação dos pacotes:
 
-Como demonstração, estou usando a série "a ap d l n". Sem interface gráfica.
+Como demonstração, estou usando as séries "a ap d l n". Sem interface gráfica.
 ```
 mount /dev/cdrom /cdrom
 for pkg in a ap d l n; do installpkg --terse --root /mnt /cdrom/slackware64/$pkg/*.txz; done
@@ -104,6 +108,8 @@ ${disk}2    swap            swap    defaults                                    
 ${disk}3    /               btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@,subvol=@                          0    0
 ${disk}3    /home           btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@home,subvol=@home                  0    0
 ${disk}3    /opt            btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@opt,subvol=@opt                    0    0
+${disk}3    /srv            btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@srv,subvol=@srv                    0    0
+${disk}3    /tmp            btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@tmp,subvol=@tmp                    0    0
 ${disk}3    /var            btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@var,subvol=@var                    0    0
 ${disk}3    /.snapshots     btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@.snapshots,subvol=@.snapshots      0    0
 devpts      /dev/pts        devpts  gid=5,mode=620                                                                  0    0
