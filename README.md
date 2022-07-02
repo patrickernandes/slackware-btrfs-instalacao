@@ -55,13 +55,13 @@ mkfs.btrfs -f -L ROOT ${disk}3
 ```
 mount ${disk}3 /mnt
 
-btrfs su cr /mnt/@
-btrfs su cr /mnt/@home
-btrfs su cr /mnt/@opt
-btrfs su cr /mnt/@srv
-btrfs su cr /mnt/@tmp
-btrfs su cr /mnt/@var
-btrfs su cr /mnt/@.snapshots
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@opt
+btrfs subvolume create /mnt/@srv
+btrfs subvolume create /mnt/@tmp
+btrfs subvolume create /mnt/@var
+btrfs subvolume create /mnt/@.snapshots
 umount /mnt
 ```
 <br>
@@ -72,7 +72,7 @@ umount /mnt
 ```
 mount -o noatime,commit=120,compress=zstd,subvol=@ ${disk}3 /mnt
 
-mkdir /mnt/{boot,home,opt,var,.snapshots}
+mkdir /mnt/{boot,home,opt,srv,tmp,var,.snapshots}
 mount -o rw,noatime,commit=120,compress=zstd,subvol=@home ${disk}3 /mnt/home
 mount -o rw,noatime,commit=120,compress=zstd,subvol=@opt ${disk}3 /mnt/opt
 mount -o rw,noatime,commit=120,compress=zstd,subvol=@srv ${disk}3 /mnt/srv
