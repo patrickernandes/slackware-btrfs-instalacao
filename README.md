@@ -53,7 +53,7 @@ mkfs.btrfs -f -L ROOT ${disk}3
 
 ## 3 - Criação do volume principal e subvolumes:
 ```
-mount ${disk}3 /mnt
+mount -t btrfs ${disk}3 /mnt
 
 btrfs subvolume create /mnt/@
 btrfs subvolume create /mnt/@home
@@ -62,6 +62,7 @@ btrfs subvolume create /mnt/@srv
 btrfs subvolume create /mnt/@tmp
 btrfs subvolume create /mnt/@var
 btrfs subvolume create /mnt/@.snapshots
+
 umount /mnt
 ```
 <br>
@@ -70,15 +71,15 @@ umount /mnt
 
 - Montagem dos volumes:
 ```
-mount -o noatime,commit=120,compress=zstd,subvol=@ ${disk}3 /mnt
+mount -o noatime,space_cache=v2,subvol=@ ${disk}3 /mnt
 
 mkdir /mnt/{boot,home,opt,srv,tmp,var,.snapshots}
-mount -o rw,noatime,commit=120,compress=zstd,subvol=@home ${disk}3 /mnt/home
-mount -o rw,noatime,commit=120,compress=zstd,subvol=@opt ${disk}3 /mnt/opt
-mount -o rw,noatime,commit=120,compress=zstd,subvol=@srv ${disk}3 /mnt/srv
-mount -o rw,noatime,commit=120,compress=zstd,subvol=@tmp ${disk}3 /mnt/tmp
-mount -o rw,noatime,commit=120,compress=zstd,subvol=@var ${disk}3 /mnt/var
-mount -o rw,noatime,commit=120,compress=zstd,subvol=@.snapshots ${disk}3 /mnt/.snapshots
+mount -o noatime,space_cache=v2,subvol=@home ${disk}3 /mnt/home
+mount -o noatime,space_cache=v2,subvol=@opt ${disk}3 /mnt/opt
+mount -o noatime,space_cache=v2,subvol=@srv ${disk}3 /mnt/srv
+mount -o noatime,space_cache=v2,subvol=@tmp ${disk}3 /mnt/tmp
+mount -o noatime,space_cache=v2,subvol=@var ${disk}3 /mnt/var
+mount -o noatime,space_cache=v2,subvol=@.snapshots ${disk}3 /mnt/.snapshots
 ```
 
 - Partição EFI:
@@ -103,35 +104,28 @@ for pkg in a ap d l n; do installpkg --terse --root /mnt /cdrom/slackware64/$pkg
 cat <<EOF > /mnt/etc/fstab
 #fstab:
       
-${disk}1    /boot/efi       vfat    defaults                                                                        1    0
-${disk}2    swap            swap    defaults                                                                        0    0
-${disk}3    /               btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@,subvol=@                          0    0
-${disk}3    /home           btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@home,subvol=@home                  0    0
-${disk}3    /opt            btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@opt,subvol=@opt                    0    0
-${disk}3    /srv            btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@srv,subvol=@srv                    0    0
-${disk}3    /tmp            btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@tmp,subvol=@tmp                    0    0
-${disk}3    /var            btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@var,subvol=@var                    0    0
-${disk}3    /.snapshots     btrfs   rw,noatime,compress=zstd,commit=120,subvol=/@.snapshots,subvol=@.snapshots      0    0
-devpts      /dev/pts        devpts  gid=5,mode=620                                                                  0    0
-proc        /proc           proc    defaults                                                                        0    0
-tmpfs       /dev/shm        tmpfs   nosuid,nodev,noexec                                                             0    0
+${disk}1    /boot/efi       vfat    defaults                                                           1    0
+${disk}2    swap            swap    defaults                                                           0    0
+${disk}3    /               btrfs   noatime,space_cache=v2,subvol=/@,subvol=@                          0    0
+${disk}3    /home           btrfs   noatime,space_cache=v2,subvol=/@home,subvol=@home                  0    0
+${disk}3    /opt            btrfs   noatime,space_cache=v2,subvol=/@opt,subvol=@opt                    0    0
+${disk}3    /srv            btrfs   noatime,space_cache=v2,subvol=/@srv,subvol=@srv                    0    0
+${disk}3    /tmp            btrfs   noatime,space_cache=v2,subvol=/@tmp,subvol=@tmp                    0    0
+${disk}3    /var            btrfs   noatime,space_cache=v2,subvol=/@var,subvol=@var                    0    0
+${disk}3    /.snapshots     btrfs   noatime,space_cache=v2,subvol=/@.snapshots,subvol=@.snapshots      0    0
+devpts      /dev/pts        devpts  gid=5,mode=620                                                     0    0
+proc        /proc           proc    defaults                                                           0    0
+tmpfs       /dev/shm        tmpfs   nosuid,nodev,noexec                                                0    0
 EOF
 ```
 <br>  
 
-## 7 - Criação do arquivo "initrd" e instalação EFI:
-
-- Arquivo initrd.gz
+## 7 - Instalação EFI:
 ```
 mount -t proc /proc /mnt/proc
 mount -o bind /dev /mnt/dev
 mount -o bind /sys /mnt/sys
 
-chroot /mnt /usr/share/mkinitrd/mkinitrd_command_generator.sh | chroot /mnt bash
-```
-
-- EFI:
-```
 source /mnt/etc/profile
 chroot /mnt /usr/sbin/grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=grub
 chroot /mnt /usr/sbin/grub-mkconfig -o /boot/grub/grub.cfg
