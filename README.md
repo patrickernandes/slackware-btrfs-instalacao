@@ -45,7 +45,7 @@ disk='/dev/sda'
 
 - Formatar as partições:
 ```
-mkfs.fat -F 32 -n EFI ${disk}1
+mkfs.fat -F32 -n EFI ${disk}1
 mkswap -L SWAP ${disk}2; swapon ${disk}2
 mkfs.btrfs -f -L ROOT ${disk}3
 ```
@@ -162,6 +162,11 @@ chroot /mnt /sbin/netconfig
 - Acertar horário:
 ```
 chroot /mnt /usr/sbin/timeconfig  
+```
+
+- Atualizar certificados CA:
+```
+chroot /mnt /usr/sbin/update-ca-certificates --fresh 1  
 ```
 <br>
 
